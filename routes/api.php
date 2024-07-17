@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BlogController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+/* organizations */
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'blogs'
+], function ($router) {
+    Route::get('/', [BlogController::class, 'index']);
+    Route::post('/create', [BlogController::class, 'store']);
+    Route::get('/{id}', [BlogController::class, 'show']);
+    Route::put('/{id}/update', [BlogController::class, 'update']);
+    Route::delete('/{id}/delete', [BlogController::class, 'destroy']);
 });
+
+// Route::apiResource('blogs', BlogController::class);
+
