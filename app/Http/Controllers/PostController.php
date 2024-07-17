@@ -1,49 +1,45 @@
 <?php
 
-// app/Http/Controllers/BlogController.php
-
 namespace App\Http\Controllers;
 
-use App\Models\Blog;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 
-class BlogController extends Controller
+class PostController extends Controller
 {
-
     /**
-     * View All Blogs: Create an endpoint to fetch all blogs.
+     * View All Posts: Create an endpoint to fetch all posts under a specific blog.
      */
-    public function index()
+    public function index($blog_id)
     {
         try {
-            $blogs = Blog::all();
+            $posts = Post::where('blog_id', $blog_id)->get();
 
             return response()->json([
                 'status' => 'success',
-                'data' => $blogs
+                'message' => count($posts) . ' Posts returned',
+                'data' => $posts
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve blogs',
+                'message' => 'Failed to retrieve posts',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Create Blog: Create an endpoint to create a new blog.
+     * Create Post: Create an endpoint to create a new post under a specific blog.
      */
-    public function store(Request $request)
+    public function store(Request $request, $blog_id)
     {
-
-        // return $request;
         try {
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
-                'description' => 'required|string',
+                'content' => 'required|string',
                 'photo_url' => 'nullable|url'
             ]);
 
@@ -54,66 +50,64 @@ class BlogController extends Controller
                 ], 400);
             }
 
-            $blog = Blog::create($request->all());
+            $post = Post::create([
+                'blog_id' => $blog_id,
+                'title' => $request->title,
+                'content' => $request->content,
+                'photo_url' => $request->photo_url
+            ]);
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog created successfully',
-                'data' => $blog
+                'data' => $post
             ], 201);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to create blog',
+                'message' => 'Failed to create post',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Show Blog: Create an endpoint to fetch details of a specific blog and its posts.
+     * Show Post: Create an endpoint to fetch details of a specific post.
      */
-    public function show($id)
+    public function show($blog_id, $id)
     {
         try {
-            // $blog = Blog::with('posts', 'comments')->find($id);
-            $blog = Blog::find($id);
+            $post = Post::where('blog_id', $blog_id)->find($id);
 
-            if (!$blog) {
+            if (!$post) {
                 return response()->json([
                     'status' => 'error',
-                    'data' => 'Blog not found'
+                    'message' => 'Post not found',
                 ], 404);
             }
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog retrieved successfully',
-                'data' => $blog
+                'data' => $post
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Blog not found',
-            ], 404);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to retrieve blog',
+                'message' => 'Failed to retrieve post',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Update Blog: Create an endpoint to update an existing blog.
+     * Update Post: Create an endpoint to update an existing post.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $blog_id, $id)
     {
         try {
             $validator = Validator::make($request->all(), [
                 'title' => 'sometimes|required|string|max:255',
-                'content' => 'sometimes|required|string'
+                'content' => 'sometimes|required|string',
+                'photo_url' => 'nullable|url'
             ]);
 
             if ($validator->fails()) {
@@ -123,62 +117,57 @@ class BlogController extends Controller
                 ], 400);
             }
 
-            $blog = Blog::find($id);
+            $post = Post::where('blog_id', $blog_id)->find($id);
 
-            if (!$blog) {
+            if (!$post) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Blog not found'
+                    'message' => 'Post not found'
                 ], 404);
             }
 
-            $blog->update($request->all());
+            $post->update($request->all());
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog updated successfully',
-                'data' => $blog
+                'message' => 'Post updated successfully',
+                'data' => $post
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Blog not found',
-            ], 404);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to update blog',
+                'message' => 'Failed to update post',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Delete Blog: Create an endpoint to delete a blog.
+     * Delete Post: Create an endpoint to delete a post.
      */
-    public function destroy($id)
+    public function destroy($blog_id, $id)
     {
         try {
-            $blog = Blog::find($id);
+            $post = Post::where('blog_id', $blog_id)->find($id);
 
-            if (!$blog) {
+            if (!$post) {
                 return response()->json([
                     'status' => 'error',
-                    'data' => 'Blog not found'
+                    'message' => 'Post not found',
                 ], 404);
             }
 
-            $blog->delete();
+            $post->delete();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog deleted successfully',
+                'message' => 'Post deleted successfully',
                 'data' => null
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to delete blog',
+                'message' => 'Failed to delete post',
                 'error' => $e->getMessage()
             ], 500);
         }
