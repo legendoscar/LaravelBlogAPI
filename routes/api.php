@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 
 
@@ -43,6 +44,8 @@ Route::prefix('blogs/{blog_id}')->group(function () {
     Route::get('posts/{id}', [PostController::class, 'show']);
     Route::put('posts/{id}', [PostController::class, 'update']);
     Route::delete('posts/{id}', [PostController::class, 'destroy']);
+    Route::post('posts/{post_id}/like', [PostController::class, 'like']);
+    Route::post('posts/{post_id}/comment', [CommentController::class, 'store']);
 });
 
 

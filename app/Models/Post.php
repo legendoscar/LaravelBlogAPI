@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Overtrue\LaravelLike\Traits\Likeable;
+
 
 class Post extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Likeable;
 
     protected $fillable = ['blog_id', 'title', 'content', 'photo_url'];
 

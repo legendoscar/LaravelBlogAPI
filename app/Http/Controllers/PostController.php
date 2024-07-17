@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -168,6 +169,47 @@ class PostController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to delete post',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete Post: Create an endpoint to delete a post.
+     */
+    public function like(Request $request, $blog_id, $post_id)
+    {
+        try {
+            $post = Post::where('blog_id', $blog_id)->find($post_id);
+            $user = User::find($request->user_id);
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not found',
+                ], 404);
+            }
+
+            if (!$post) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Post not found',
+                ], 404);
+            }
+
+            $user->toggleLike($post);
+
+            $message = $user->hasLiked($post) == 1 ? 'Post liked' : 'Post unliked';
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to complete action',
                 'error' => $e->getMessage()
             ], 500);
         }
