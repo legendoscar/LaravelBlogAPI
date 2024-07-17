@@ -16,8 +16,19 @@ class Post extends Model
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
+    /**
+     * Get the blog that owns the post.
+     */
     public function blog()
     {
         return $this->belongsTo(Blog::class);
+    }
+
+    /**
+     * Get the comments for the post.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

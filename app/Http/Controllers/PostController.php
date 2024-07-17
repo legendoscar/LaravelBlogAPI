@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class PostController extends Controller
     public function index($blog_id)
     {
         try {
-            $posts = Post::where('blog_id', $blog_id)->get();
+            $blog = Blog::findOrFail($blog_id);
+            $posts = $blog->posts;
 
             return response()->json([
                 'status' => 'success',
@@ -51,7 +53,8 @@ class PostController extends Controller
                 ], 400);
             }
 
-            $post = Post::create([
+            $blog = Blog::findOrFail($blog_id);
+            $post = $blog->posts()->create([
                 'blog_id' => $blog_id,
                 'title' => $request->title,
                 'content' => $request->content,
@@ -74,10 +77,11 @@ class PostController extends Controller
     /**
      * Show Post: Create an endpoint to fetch details of a specific post.
      */
-    public function show($blog_id, $id)
+    public function show($blog_id, $post_id)
     {
         try {
-            $post = Post::where('blog_id', $blog_id)->find($id);
+            $blog = Blog::findOrFail($blog_id);
+            $post = $blog->posts()->with('comments')->findOrFail($post_id);
 
             if (!$post) {
                 return response()->json([
@@ -102,7 +106,7 @@ class PostController extends Controller
     /**
      * Update Post: Create an endpoint to update an existing post.
      */
-    public function update(Request $request, $blog_id, $id)
+    public function update(Request $request, $blog_id, $post_id)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -118,7 +122,8 @@ class PostController extends Controller
                 ], 400);
             }
 
-            $post = Post::where('blog_id', $blog_id)->find($id);
+            $blog = Blog::findOrFail($blog_id);
+            $post = $blog->posts()->findOrFail($post_id);
 
             if (!$post) {
                 return response()->json([
@@ -146,10 +151,11 @@ class PostController extends Controller
     /**
      * Delete Post: Create an endpoint to delete a post.
      */
-    public function destroy($blog_id, $id)
+    public function destroy($blog_id, $post_id)
     {
         try {
-            $post = Post::where('blog_id', $blog_id)->find($id);
+            $blog = Blog::findOrFail($blog_id);
+            $post = $blog->posts()->findOrFail($post_id);
 
             if (!$post) {
                 return response()->json([

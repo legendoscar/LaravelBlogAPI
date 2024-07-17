@@ -12,12 +12,14 @@ return new class extends Migration {
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('blog_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('blog_id');
             $table->string('title');
             $table->text('content');
             $table->text('photo_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('blog_id')->references('id')->on('blogs')->onDelete('cascade');
         });
     }
 

@@ -14,4 +14,12 @@ class Blog extends Model
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
+    /**
+     * Get the posts for the blog.
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
 }
