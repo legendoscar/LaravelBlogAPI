@@ -7,27 +7,29 @@ This is a Laravel project that implements a blog API with endpoints for managing
 ## Requirements
 
 - PHP 8.1 or higher
+- Laravel 10 or higher
 - Composer
 - MySQL or any other supported database
 
 ## Installation
 1. Clone the repository: 
     git clone https://github.com/legendoscar/LaravelBlogAPI.git
-    cd LaravelBlogAPI
+    
+2. cd LaravelBlogAPI
 
-2. Install the dependencies:
+3. Install the dependencies:
     composer install
 
-3. Copy the .env.example file to .env and configure your database and other environment settings:
+4. Copy the .env.example file to .env and configure your database and other environment settings:
     cp .env.example .env
 
-4. Generate the application key:
+5. Generate the application key:
     php artisan key:generate
 
-5. Run the database migrations and seeders:
+6. Run the database migrations and seeders:
     php artisan migrate --seed
 
-6. Serve the application:
+7. Serve the application:
     php artisan serve --port=1600
 
 
@@ -56,20 +58,6 @@ The project follows the Laravel MVC pattern. Below are the key directories and f
 - database/migrations: Contains the database migrations.
 - routes/api.php: Contains the API routes.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
 ## Contributing
 
 If you wish to contribute to the project, feel free to open a pull request on the [GitHub repository](https://github.com/legendoscar/LaravelBlogAPI.git).
@@ -77,4 +65,4 @@ If you wish to contribute to the project, feel free to open a pull request on th
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-source and available under the [MIT license](https://opensource.org/licenses/MIT).
