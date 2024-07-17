@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\User;
+use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -43,7 +44,8 @@ class PostController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                'photo_url' => 'nullable|url'
+                'photo_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+
             ]);
 
             if ($validator->fails()) {
@@ -54,12 +56,41 @@ class PostController extends Controller
             }
 
             $blog = Blog::findOrFail($blog_id);
+
+            // upload photo
+            if ($request->hasFile('photo_url')) {
+                // Ensure the directory exists
+                $targetDir = public_path('assets/photos');
+
+                // Check if the directory exists, if not create it
+                if (!File::exists($targetDir)) {
+                    File::makeDirectory($targetDir, 0755, true);
+                }
+
+                // Store the file with a new name
+                // Save the file to the public directory
+                $fileName = $request->file('logo')->getClientOriginalExtension();
+                $request->file('photo_url')->move($targetDir, $fileName);
+
+                // The need of this env check is to make sure that the file is uploaded to the right directory which could be different in local and production
+                if (env('APP_ENV') === 'production' || env('APP_ENV') === 'development') {
+                    $photoUrl = url('public/assets/photos/' . $fileName);
+                } else {
+                    $photoUrl = url('assets/photos/' . $fileName);
+                }
+
+                // If you want the absolute URL
+                $photoUrl = url($photoUrl);
+            }
+
             $post = $blog->posts()->create([
                 'blog_id' => $blog_id,
                 'title' => $request->title,
                 'content' => $request->content,
-                'photo_url' => $request->photo_url
+                'photo_url' => $request->hasFile('photo_url') ? $photoUrl : ''
             ]);
+
+
 
             return response()->json([
                 'status' => 'success',

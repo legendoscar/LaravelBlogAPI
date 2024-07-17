@@ -26,7 +26,7 @@ use App\Http\Controllers\CommentController;
 
 /* organizations */
 Route::group([
-    'middleware' => ['api'],
+    'middleware' => ['api', 'token'],
     'prefix' => 'blogs'
 ], function ($router) {
     Route::get('/', [BlogController::class, 'index']);
@@ -38,7 +38,10 @@ Route::group([
 
 
 
-Route::prefix('blogs/{blog_id}')->group(function () {
+Route::group([
+    'middleware' => ['api', 'token'],
+    'prefix' => 'blogs/{blog_id}'
+], function () {
     Route::get('posts', [PostController::class, 'index']);
     Route::post('posts', [PostController::class, 'store']);
     Route::get('posts/{id}', [PostController::class, 'show']);

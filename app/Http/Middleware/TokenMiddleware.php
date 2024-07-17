@@ -15,7 +15,7 @@ class TokenMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->header('Authorization-Token');
+        $token = $request->header('Authorization');
 
         if ($token !== 'vg@123') {
             return response()->json([
